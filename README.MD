@@ -15,6 +15,7 @@ This script scans the communication properties of email items and tags those whi
 
 ## Setup
 
+Begin by downloading the latest release.  Extract the contents of the archive into your Nuix scripts directory.  In Windows the script directory is likely going to be either of the following:
 
 - `%appdata%\Nuix\Scripts` - User level script directory
 - `%programdata%\Nuix\Scripts` - System level script directory
