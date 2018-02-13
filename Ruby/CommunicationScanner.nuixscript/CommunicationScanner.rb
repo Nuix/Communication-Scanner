@@ -245,14 +245,14 @@ if dialog.getDialogResult == true
 				end
 			end
 
-			# Annotate address list as custom metadata if settings called for it
-			if values["apply_address_list"]
-				item_addresses ||= AddressHelper.get_distinct_addresses(item)
-				item_custom_metadata = item.getCustomMetadata
-				item_custom_metadata[values["address_list_field_name"]] = item_addresses.keys.sort.join("\n")
-			end
-
 			if !test_failed
+				# Annotate address list as custom metadata if settings called for it
+				if values["apply_address_list"]
+					item_addresses ||= AddressHelper.get_distinct_addresses(item)
+					item_custom_metadata = item.getCustomMetadata
+					item_custom_metadata[values["address_list_field_name"]] = item_addresses.keys.sort.join("\n")
+				end
+				
 				passed_items << item
 			end
 		end
@@ -262,7 +262,7 @@ if dialog.getDialogResult == true
 
 		pd.logMessage("Qualified Items: #{passed_items.size}")
 
-		# Resolve to famlies if settings specified to do so
+		# Resolve to families if settings specified to do so
 		if values["include_families"]
 			pd.setMainStatusAndLogIt("Including families...")
 			passed_items = iutil.findFamilies(passed_items)
