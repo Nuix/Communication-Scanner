@@ -1,3 +1,4 @@
+
 Communications Scanner
 ======================
 
@@ -28,9 +29,7 @@ When the script is ran a dialog will be displayed where the user may specify the
 
 | Setting | Description |
 |---------|-------------|
-| **Use Selected Items** | Scanning will be performed over only the currently selected items.  Note that this option is only available if items were selected when the script was started. |
-| **Use Scope Query** | When **Use Scope Query** is checked, the items scanned will be determined based on the Nuix query provided to **Scope Query**.  Note that this is optional only if items were selected when the script was started. |
-| **Scope Query** | When `Use Scope Query` is checked, this query will be ran to determine the items which the script scans. |
+| **Scope Query** | This query will be ran to determine the items which the script scans. **Note:** If items were selected in the results view when the script was started this option is not available because the script will scan the selected items. |
 
 **Note**: Since this script inspects the communication of items, items without a communication are skipped while scanning.  Additionally, as with all queries ran through the scripting API, excluded items are not handled.  If you wish to prevent excluded items from being scanned include `has-exclusion:0` in your query.
 

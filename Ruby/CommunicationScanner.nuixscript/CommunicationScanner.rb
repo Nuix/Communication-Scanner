@@ -23,6 +23,13 @@ load File.join(script_directory,"AddressHelper.rb")
 addresses = nil
 domains = nil
 
+use_selected_items = false
+if !$current_selected_items.nil? && $current_selected_items.size > 0
+	use_selected_items = true
+else
+	use_selected_items = false
+end
+
 # Build a listing of addresses present in the case.  This process can take some time
 # so we show a progress dialog while were doing it.
 ProgressDialog.forBlock do |pd|
@@ -30,8 +37,16 @@ ProgressDialog.forBlock do |pd|
 	pd.setAbortButtonVisible(false)
 	pd.setSubProgressVisible(false)
 	pd.setLogVisible(false)
-	pd.setMainStatusAndLogIt("Locating items with communications...")
-	items = $current_case.searchUnsorted("has-communication:1")
+
+	items = nil
+
+	if use_selected_items
+		pd.logMessage("Using selected items...")
+		items = $current_selected_items
+	else
+		pd.setMainStatusAndLogIt("Locating items with communications...")
+		items = $current_case.searchUnsorted("has-communication:1")
+	end
 	
 	pd.setMainStatusAndLogIt("Locating all distinct addresses...")
 	pd.setMainProgress(0,items.size)
@@ -53,12 +68,8 @@ end
 dialog = TabbedCustomDialog.new("Communication Scanner")
 
 main_tab = dialog.addTab("main_tab","Main")
-if !$current_selected_items.nil? && $current_selected_items.size > 0
-	main_tab.appendRadioButton("use_selected_items","Use #{$current_selected_items.size} selected items","input_items",true)
-	main_tab.appendRadioButton("use_scope_query","Use scope query","input_items",false)
-	main_tab.appendHeader("Scope Query")
-	main_tab.appendTextArea("scope_query","","has-communication:1")
-	main_tab.enabledOnlyWhenChecked("scope_query","use_scope_query")
+if use_selected_items
+	main_tab.appendHeader("Using #{$current_selected_items.size} selected items")
 else
 	main_tab.appendHeader("Scope Query")
 	main_tab.appendTextArea("scope_query","","has-communication:1")
@@ -115,7 +126,7 @@ if dialog.getDialogResult == true
 		# Determine if we are using selected items or a scope query and
 		# then obtain appropriate items
 		items = nil
-		if values["use_selected_items"]
+		if use_selected_items
 			items = $current_selected_items
 		else
 			items = $current_case.searchUnsorted(values["scope_query"])
