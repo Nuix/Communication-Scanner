@@ -2,7 +2,7 @@
 Communications Scanner
 ======================
 
-![Last tested in Nuix 7.4](https://img.shields.io/badge/Nuix-7.4-green.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) ![This script was last tested in Nuix 7.8](https://img.shields.io/badge/Script%20Tested%20in%20Nuix-7.8-green.svg)
 
 View the GitHub project [here](https://github.com/Nuix/Communication-Scanner) or download the latest release [here](https://github.com/Nuix/Communication-Scanner/releases).
 
@@ -74,10 +74,18 @@ When the script is ran a dialog will be displayed where the user may specify the
 | **Record Address List as Custom Metadata** | When checked, each item scanned will have a list of distinct email addresses recorded as a custom metadata field. |
 | **Address List Field Name** | Specified the name of the custom metadata field when **Record Address List as Custom Metadata** is checked. |
 
+# Cloning this Repository
+
+This script relies on code from [Nx](https://github.com/Nuix/Nx) to present a settings dialog and progress dialog.  This JAR file is not included in the repository (although it is included in release downloads).  If you clone this repository, you will also want to obtain a copy of Nx.jar by either:
+1. Building it from [the source](https://github.com/Nuix/Nx)
+2. Downloading an already built JAR file from the [Nx releases](https://github.com/Nuix/Nx/releases)
+
+Once you have a copy of Nx.jar, make sure to include it in the same directory as the script.
+
 # License
 
 ```
-Copyright 2018 Nuix
+Copyright 2019 Nuix
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

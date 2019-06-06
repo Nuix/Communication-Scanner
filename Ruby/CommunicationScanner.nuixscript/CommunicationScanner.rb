@@ -8,7 +8,6 @@ require_relative "Nx.jar"
 java_import "com.nuix.nx.NuixConnection"
 java_import "com.nuix.nx.LookAndFeelHelper"
 java_import "com.nuix.nx.dialogs.ChoiceDialog"
-java_import "com.nuix.nx.dialogs.CustomDialog"
 java_import "com.nuix.nx.dialogs.TabbedCustomDialog"
 java_import "com.nuix.nx.dialogs.CommonDialogs"
 java_import "com.nuix.nx.dialogs.ProgressDialog"
@@ -66,6 +65,7 @@ end
 
 # Build the settings dialog
 dialog = TabbedCustomDialog.new("Communication Scanner")
+dialog.setHelpUrl("https://github.com/Nuix/Communication-Scanner")
 
 main_tab = dialog.addTab("main_tab","Main")
 if use_selected_items
@@ -115,6 +115,99 @@ reporting_tab.appendTextField("tag_template","Tag","CommunicationScanMatch")
 reporting_tab.appendCheckBox("include_families","Tag Family Members",false)
 reporting_tab.appendCheckBox("apply_address_list","Record Address List as Custom Metadata",false)
 reporting_tab.appendTextField("address_list_field_name","Address List Field Name","Address List")
+
+# Menu item allowing user to check addresses based on their presence in a selected text file
+dialog.addMenu("Selection","Import Address Selection...") do
+	import_file = CommonDialogs.openFileDialog("C:\\","Address List Text File (*.txt)","txt","Import Address Selection")
+	if import_file.nil? == false
+		import_values = {}
+		File.readlines(import_file.getPath).each do |value|
+			import_values[value.downcase.strip] = true
+		end
+		matched_values = {}
+		table = addresses_tab.getControl("target_addresses")
+		table_model = table.getTableModel
+		table_model.getChoices.each do |choice|
+			normalized_choice_value = choice.getValue.downcase.strip
+			if import_values[normalized_choice_value] == true
+				choice.setSelected(true)
+				matched_values[normalized_choice_value] = true
+			end
+		end
+		addresses_tab.setChecked("require_addresses",true)
+
+		# Report which addresses in the import list did not have a corresponding
+		# value to check in the list
+		unmatched_values = []
+		import_values.keys.each do |value|
+			if matched_values[value] != true
+				unmatched_values << value
+			end
+		end
+
+		if unmatched_values.size > 0
+			message = "Import file contained #{import_values.size} addresses, of which #{unmatched_values.size} addresses " +
+				"were not found to be present in the list built from the case:\n\n"
+			message += unmatched_values.take(10).join("\n")
+			if unmatched_values.size > 10
+				message += "... #{unmatched_values.size - 10} more ...\n\n"
+				message += "See script console or logs for full list"
+			end
+			CommonDialogs.showWarning(message,"Some Imported Addresses Not Checked")
+			# Make sure full list gets to Nuix log
+			log_message = "Import file contained #{import_values.size} addresses, of which #{unmatched_values.size} addresses " +
+				"were not found to be present in the list built from the case:\n\n#{unmatched_values.join("\n")}"
+			puts log_message
+		end
+		table_model.refreshTable
+	end
+end
+
+# Menu item allowing user to check domains based on their presence in a selected text file
+dialog.addMenu("Selection","Import Domain Selection...") do
+	import_file = CommonDialogs.openFileDialog("C:\\","Domain List Text File (*.txt)","txt","Import Domain Selection")
+	if import_file.nil? == false
+		import_values = {}
+		File.readlines(import_file.getPath).each do |value|
+			import_values[value.downcase.strip] = true
+		end
+		matched_values = {}
+		table = domains_tab.getControl("target_domains")
+		table_model = table.getTableModel
+		table_model.getChoices.each do |choice|
+			normalized_choice_value = choice.getValue.downcase.strip
+			if import_values[normalized_choice_value] == true
+				choice.setSelected(true)
+				matched_values[normalized_choice_value] = true
+			end
+		end
+		domains_tab.setChecked("require_domains",true)
+
+		# Report which domains in the import list did not have a corresponding
+		# value to check in the list
+		unmatched_values = []
+		import_values.keys.each do |value|
+			if matched_values[value] != true
+				unmatched_values << value
+			end
+		end
+		if unmatched_values.size > 0
+			message = "Import file contained #{import_values.size} domains, of which #{unmatched_values.size} domains " +
+				"were not found to be present in the list built from the case:\n\n"
+			message += unmatched_values.take(10).join("\n")
+			if unmatched_values.size > 10
+				message += "... #{unmatched_values.size - 10} more ...\n\n"
+				message += "See script console or logs for full list"
+			end
+			CommonDialogs.showWarning(message,"Some Imported Domains Not Checked")
+			# Make sure full list gets to Nuix log
+			log_message = "Import file contained #{import_values.size} domains, of which #{unmatched_values.size} domains " +
+				"were not found to be present in the list built from the case:\n\n#{unmatched_values.join("\n")}"
+			puts log_message
+		end
+		table_model.refreshTable
+	end
+end
 
 dialog.display
 if dialog.getDialogResult == true

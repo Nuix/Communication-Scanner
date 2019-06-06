@@ -1,7 +1,7 @@
 # Helper methods for working with item emails addresses
 class AddressHelper
 	# Regular expression for extracting domain from email address
-	@domain_regex = /^.*(@[^@]+)$/
+	@domain_regex = /^.*@([^@]+)$/
 
 	# Given 1 or more items, will generate a list of distinct email addresses
 	# on those items, yields a progress count to the provided block
