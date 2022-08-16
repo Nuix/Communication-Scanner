@@ -2,7 +2,7 @@
 Communications Scanner
 ======================
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) ![This script was last tested in Nuix 7.8](https://img.shields.io/badge/Script%20Tested%20in%20Nuix-7.8-green.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) ![This script was last tested in Nuix 9.8](https://img.shields.io/badge/Script%20Tested%20in%20Nuix-9.8-green.svg)
 
 View the GitHub project [here](https://github.com/Nuix/Communication-Scanner) or download the latest release [here](https://github.com/Nuix/Communication-Scanner/releases).
 
@@ -43,6 +43,7 @@ When the script is ran a dialog will be displayed where the user may specify the
 | **Ignore items with any address other than these** | Items only qualify if they only have addresses which are present in your selection.  Not required to have all selected addresses present. |
 | **Require addresses other than these** | Items only qualify if they have addresses outside those in your selection.  Not required to have all addresses which you did not select. |
 | **Required Addresses** | Your selection of email addresses used by the address filtering options. |
+| **Fields Scanned** | Determines which address fields are scanned. Only addresses in the selected fields will be considered.  Contents of un-selected address fields will be ignored.  At least 1 must be selected. |
 
 ## Domains Tab
 
@@ -54,6 +55,7 @@ When the script is ran a dialog will be displayed where the user may specify the
 | **Ignore items with any domain other than these** | Items only qualify if they only have address domains which are present in your selection.  Not required to have all selected domains present. |
 | **Require domains other than these** | Items only qualify if they have address domains outside those in your selection.  Not required to have all address domains which you did not select. |
 | **Required Domains** | Your selection of email address domains used by the domain filtering options. |
+| **Fields Scanned** | Determines which address fields are scanned. Only addresses in the selected fields will be considered.  Contents of un-selected address fields will be ignored.  At least 1 must be selected. |
 
 **Note**: Email address domains are obtained from a given address using the regular expression `^.*(@[^@]+)$` and using the value of the first capture group.  If this regular expression does not find a match, the domain for the given item will treated as the value `UNKNOWN DOMAIN`.
 
@@ -85,7 +87,7 @@ Once you have a copy of Nx.jar, make sure to include it in the same directory as
 # License
 
 ```
-Copyright 2019 Nuix
+Copyright 2022 Nuix
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
