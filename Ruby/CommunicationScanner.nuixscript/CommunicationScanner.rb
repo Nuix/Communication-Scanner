@@ -63,6 +63,8 @@ ProgressDialog.forBlock do |pd|
 	pd.dispose
 end
 
+address_fields = AddressHelper.address_field_choices
+
 # Build the settings dialog
 dialog = TabbedCustomDialog.new("Communication Scanner")
 dialog.setHelpUrl("https://github.com/Nuix/Communication-Scanner")
@@ -82,6 +84,7 @@ addresses_tab.appendRadioButton("has_only_selected_addresses","All selected must
 addresses_tab.appendRadioButton("has_at_least_selected_addresses","All selected must be present, others may also be present","addresses_filter",false)
 addresses_tab.appendRadioButton("ignore_unselected_addresses","Ignore items with any address other than these","addresses_filter",false)
 addresses_tab.appendRadioButton("require_other_addresses","Require addresses other than these","addresses_filter",false)
+addresses_tab.appendMultipleChoiceComboBox("require_addresses_fields","Fields Scanned",address_fields,address_fields)
 addresses_tab.appendStringChoiceTable("target_addresses","Required Addresses",addresses.keys.sort)
 addresses_tab.enabledOnlyWhenChecked("target_addresses","require_addresses")
 addresses_tab.enabledOnlyWhenChecked("has_only_selected_addresses","require_addresses")
@@ -96,6 +99,7 @@ domains_tab.appendRadioButton("has_only_selected_domains","All selected must be 
 domains_tab.appendRadioButton("has_at_least_selected_domains","All selected must be present, others may also be present","domains_filter",false)
 domains_tab.appendRadioButton("ignore_unselected_domains","Ignore items with any domain other than these","domains_filter",false)
 domains_tab.appendRadioButton("require_other_domains","Require domains other than these","domains_filter",false)
+domains_tab.appendMultipleChoiceComboBox("require_domains_fields","Fields Scanned",address_fields,address_fields)
 domains_tab.appendStringChoiceTable("target_domains","Required Domains",domains.keys.sort)
 domains_tab.enabledOnlyWhenChecked("target_domains","require_domains")
 domains_tab.enabledOnlyWhenChecked("has_only_selected_domains","require_domains")
@@ -209,6 +213,21 @@ dialog.addMenu("Selection","Import Domain Selection...") do
 	end
 end
 
+# Make sure user specifies some fields to check against
+dialog.validateBeforeClosing do |values|
+	if values["require_addresses_fields"].size < 1
+		CommonDialogs.showWarning("Please select at least one field for addresses to be checked against.")
+		next false
+	end
+
+	if values["require_domains_fields"].size < 1
+		CommonDialogs.showWarning("Please select at least one field for domains to be checked against.")
+		next false
+	end
+
+	next true
+end
+
 dialog.display
 if dialog.getDialogResult == true
 	ProgressDialog.forBlock do |pd|
@@ -236,6 +255,9 @@ if dialog.getDialogResult == true
 		values["target_domains"].each do |domain|
 			target_domains[domain] = true
 		end
+
+		require_addresses_fields = values["require_addresses_fields"]
+		require_domains_fields = values["require_domains_fields"]
 
 		passed_items = []
 
@@ -270,7 +292,7 @@ if dialog.getDialogResult == true
 
 			# Address criteria
 			if values["require_addresses"] && !test_failed
-				item_addresses = AddressHelper.get_distinct_addresses(item)
+				item_addresses = AddressHelper.get_distinct_addresses(item,require_addresses_fields)
 				if item_addresses.size < 1
 					test_failed = true
 				else
@@ -310,7 +332,7 @@ if dialog.getDialogResult == true
 
 			# Domain criteria
 			if values["require_domains"] && !test_failed
-				item_addresses ||= AddressHelper.get_distinct_addresses(item)
+				item_addresses ||= AddressHelper.get_distinct_addresses(item,require_domains_fields)
 				item_domains = AddressHelper.get_distinct_domains(item_addresses.keys)
 				if item_domains.size < 1
 					test_failed = true
